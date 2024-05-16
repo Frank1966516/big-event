@@ -3,6 +3,7 @@ package com.itheima.controller;
 import com.itheima.pojo.Result;
 import com.itheima.pojo.User;
 import com.itheima.service.UserService;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,13 @@ public class UserController {
 
     // 注册
     @PostMapping("/register")
-    public Result register(String username, String password){
+    public Result register(@Pattern(regexp = "^\\S{5,16}$") String username, @Pattern(regexp = "^\\S{5,16}$") String password){
+//        // 判断用户名和密码合法性
+//        if(username == null || username.trim().isEmpty() || username.length() < 5 || username.length() > 16
+//                || password == null || password.trim().isEmpty() || password.length() < 5 || password.length() > 16){
+//            return Result.error("用户名或密码不合法");
+//        }
+
         // 查询用户
         User user = userService.findByUsername(username);
 

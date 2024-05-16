@@ -24,7 +24,7 @@ public class UserController {
         if(user == null){
             // 注册
             userService.register(username, password);
-            return Result.success("注册成功");
+            return Result.success();
         }
         return Result.error("用户名已存在");
     }

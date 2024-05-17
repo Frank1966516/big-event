@@ -5,8 +5,10 @@ import com.itheima.pojo.User;
 import com.itheima.service.UserService;
 import com.itheima.utils.JwtUtil;
 import com.itheima.utils.Md5Util;
+import com.itheima.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,5 +67,17 @@ public class UserController {
         }
 
         return Result.error("密码错误");
+    }
+
+    // 详细信息
+    @GetMapping("/userInfo")
+    public Result<User> userInfo(){
+        // 在threadLocal中拿取用户信息
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        String username = claims.get("username").toString();
+
+        // 查询用户
+        User user = userService.findByUsername(username);
+        return Result.success(user);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -56,7 +57,9 @@ public class UserController {
         // 判断密码是否正确
         if (Md5Util.getMD5String(password).equals(user.getPassword())){
             // 生成jwt令牌
-            Map <String, Object> claims = Map.of("username", username);
+            Map <String, Object> claims = new HashMap<>();
+            claims.put("id", user.getId());
+            claims.put("username", user.getUsername());
             String token = JwtUtil.genToken(claims);
             return Result.success(token);
         }

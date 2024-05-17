@@ -2,6 +2,7 @@ package com.itheima.mapper;
 
 import com.itheima.pojo.Article;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -12,4 +13,8 @@ public interface ArticleMapper {
 
     // 文章列表查询
     List<Article> list(Integer categoryId, String state, Integer id);
+
+    // 根据id查询文章
+    @Select("select * from article where id = #{id}")
+    Article getById(Integer id);
 }

@@ -44,4 +44,10 @@ public class ArticleServiceImpl implements ArticleService {
 
         return new PageBean<>(page.getTotal(), page.getResult());
     }
+
+    // 文章详情查询
+    @Override
+    public Article getById(Integer id) {
+        return articleMapper.getById(id);
+    }
 }

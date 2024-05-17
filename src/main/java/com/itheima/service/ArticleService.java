@@ -10,4 +10,7 @@ public interface ArticleService {
 
     // 文章列表查询
     PageBean<Article> list(Integer pageNum, Integer pageSize, Integer categoryId, String state);
+
+    // 文章详情查询
+    Article getById(Integer id);
 }

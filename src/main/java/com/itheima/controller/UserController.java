@@ -7,10 +7,12 @@ import com.itheima.utils.JwtUtil;
 import com.itheima.utils.Md5Util;
 import com.itheima.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,6 +85,18 @@ public class UserController {
     @PutMapping("/update")
     public Result update(@RequestBody @Validated User user){
         // 更新用户信息
+        userService.update(user);
+        return Result.success("更新成功");
+    }
+
+    // 更新用户头像
+    @PatchMapping("/updateAvatar")
+    public Result updateAvatar(@RequestParam @URL String avatarUrl){
+        User user = new User();
+        user.setUserPic(avatarUrl);
+        user.setUpdateTime(LocalDateTime.now());
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        user.setId((Integer) claims.get("id"));
         userService.update(user);
         return Result.success("更新成功");
     }

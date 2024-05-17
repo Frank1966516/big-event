@@ -9,6 +9,9 @@
         <set>
             <if test="nickname != null"> nickname = #{nickname},</if>
             <if test="email != null"> email = #{email},</if>
+            <if test="updateTime != null"> update_time = #{updateTime},</if>
+            <if test="userPic != null"> user_pic = #{userPic},</if>
+            <if test="password != null"> password = #{password},</if>
         </set>
         where id = #{id}
     </update>

@@ -9,6 +9,7 @@ import com.itheima.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,6 +98,37 @@ public class UserController {
         user.setUpdateTime(LocalDateTime.now());
         Map<String, Object> claims = ThreadLocalUtil.get();
         user.setId((Integer) claims.get("id"));
+        userService.update(user);
+        return Result.success("更新成功");
+    }
+
+    // 更新用户密码
+    @PatchMapping("/updatePwd")
+    public Result updatePwd(@RequestBody Map<String, String> params){
+        // 校验参数
+        String newPassword = params.get("new_pwd");
+        String oldPassword = params.get("old_pwd");
+        String rePassword = params.get("re_pwd");
+
+        if (!StringUtils.hasLength(newPassword) || !StringUtils.hasLength(oldPassword) || !StringUtils.hasLength(rePassword)){
+            return Result.error("参数不能为空");
+        }
+
+        // 查询原密码与现在密码是否相同
+        Map<String, Object> claims = ThreadLocalUtil.get();
+        User user = userService.findByUsername(claims.get("username").toString());
+
+        if (!Md5Util.getMD5String(oldPassword).equals(user.getPassword())){
+            return Result.error("原密码错误");
+        }
+        // 判断两次密码是否相同
+        if (!newPassword.equals(rePassword)){
+            return Result.error("两次密码不一致");
+        }
+
+        // 修改密码
+        user.setPassword(Md5Util.getMD5String(newPassword));
+        user.setUpdateTime(LocalDateTime.now());
         userService.update(user);
         return Result.success("更新成功");
     }

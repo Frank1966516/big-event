@@ -11,3 +11,9 @@ server:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true # 开启驼峰命名
+aliyun:
+  oss:
+    accessKeyId: LTAI5tCW93yYLURLBMgYWamm
+    accessKeySecret: UesR2G9p45xb9X8OQvdKmgxDPh8odA
+    endpoint: oss-cn-beijing.aliyuncs.com
+    bucketName: take-out2

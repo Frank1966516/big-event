@@ -16,4 +16,7 @@ public interface ArticleService {
 
     // 文章更新
     void update(Article article);
+
+    // 文章删除
+    void delete(Integer id);
 }

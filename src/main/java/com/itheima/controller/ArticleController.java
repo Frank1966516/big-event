@@ -46,4 +46,11 @@ public class ArticleController {
         articleService.update(article);
         return Result.success("更新成功");
     }
+
+    // 文章删除
+    @DeleteMapping
+    public Result delete(Integer id){
+        articleService.delete(id);
+        return Result.success("删除成功");
+    }
 }

@@ -1,6 +1,7 @@
 package com.itheima.mapper;
 
 import com.itheima.pojo.Article;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -20,4 +21,8 @@ public interface ArticleMapper {
 
     // 文章更新
     void update(Article article);
+
+    // 删除文章
+    @Delete("delete from article where id = #{id}")
+    void delete(Integer id);
 }

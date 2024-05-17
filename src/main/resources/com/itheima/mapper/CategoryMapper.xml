@@ -10,4 +10,15 @@
         values
             (#{categoryName}, #{categoryAlias}, #{createUser}, #{createTime}, #{updateTime})
     </insert>
+
+    <!-- 更新文章分类 -->
+    <update id="update" parameterType="com.itheima.pojo.Category">
+        update category
+        <set>
+            <if test="categoryName != null and categoryName != ''">category_name = #{categoryName},</if>
+            <if test="categoryAlias != null and categoryAlias != ''">category_alias = #{categoryAlias},</if>
+            <if test="updateTime != null">update_time = #{updateTime}</if>
+        </set>
+        where id = #{id}
+    </update>
 </mapper>

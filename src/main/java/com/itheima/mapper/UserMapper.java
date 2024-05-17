@@ -4,6 +4,7 @@ import com.itheima.pojo.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserMapper {
@@ -15,4 +16,7 @@ public interface UserMapper {
     @Insert("insert into user (username, password, create_time, update_time)" +
             "values (#{username}, #{password}, now(), now())")
     void insert(String username, String password);
+
+    // 更新用户信息
+    void update(User user);
 }

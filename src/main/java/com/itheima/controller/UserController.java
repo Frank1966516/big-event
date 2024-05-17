@@ -8,10 +8,8 @@ import com.itheima.utils.Md5Util;
 import com.itheima.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -79,5 +77,13 @@ public class UserController {
         // 查询用户
         User user = userService.findByUsername(username);
         return Result.success(user);
+    }
+
+    // 更新用户信息
+    @PutMapping("/update")
+    public Result update(@RequestBody @Validated User user){
+        // 更新用户信息
+        userService.update(user);
+        return Result.success("更新成功");
     }
 }

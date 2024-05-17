@@ -9,6 +9,7 @@ import com.itheima.utils.ThreadLocalUtil;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +17,15 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     // 注册
     @PostMapping("/register")
@@ -58,16 +62,20 @@ public class UserController {
         }
 
         // 判断密码是否正确
-        if (Md5Util.getMD5String(password).equals(user.getPassword())){
-            // 生成jwt令牌
-            Map <String, Object> claims = new HashMap<>();
-            claims.put("id", user.getId());
-            claims.put("username", user.getUsername());
-            String token = JwtUtil.genToken(claims);
-            return Result.success(token);
+        if (!Md5Util.getMD5String(password).equals(user.getPassword())){
+            return Result.error("密码错误");
         }
 
-        return Result.error("密码错误");
+        // 生成jwt令牌
+        Map <String, Object> claims = new HashMap<>();
+        claims.put("id", user.getId());
+        claims.put("username", user.getUsername());
+        String token = JwtUtil.genToken(claims);
+
+        // 将令牌存到redis中
+        redisTemplate.opsForValue()
+                .set(token, token, 12, TimeUnit.HOURS);
+        return Result.success(token);
     }
 
     // 详细信息
@@ -104,7 +112,7 @@ public class UserController {
 
     // 更新用户密码
     @PatchMapping("/updatePwd")
-    public Result updatePwd(@RequestBody Map<String, String> params){
+    public Result updatePwd(@RequestBody Map<String, String> params, @RequestHeader("Authorization") String token){
         // 校验参数
         String newPassword = params.get("new_pwd");
         String oldPassword = params.get("old_pwd");
@@ -130,6 +138,9 @@ public class UserController {
         user.setPassword(Md5Util.getMD5String(newPassword));
         user.setUpdateTime(LocalDateTime.now());
         userService.update(user);
+
+        // 删除原token
+        redisTemplate.delete(token);
         return Result.success("更新成功");
     }
 }

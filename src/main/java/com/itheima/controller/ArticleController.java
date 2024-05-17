@@ -39,4 +39,11 @@ public class ArticleController {
         Article article = articleService.getById(id);
         return Result.success(article);
     }
+
+    // 文章更新
+    @PutMapping
+    public Result update(@RequestBody @Validated Article article){
+        articleService.update(article);
+        return Result.success("更新成功");
+    }
 }

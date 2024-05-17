@@ -17,4 +17,7 @@ public interface ArticleMapper {
     // 根据id查询文章
     @Select("select * from article where id = #{id}")
     Article getById(Integer id);
+
+    // 文章更新
+    void update(Article article);
 }

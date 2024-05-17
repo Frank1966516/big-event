@@ -11,6 +11,20 @@
             (#{title}, #{content}, #{coverImg}, #{categoryId}, #{createUser}, #{createTime}, #{updateTime}, #{state})
     </insert>
 
+    <!-- 更新文章 -->
+    <update id="update" parameterType="com.itheima.pojo.Article">
+        update article
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="coverImg != null and coverImg != ''">cover_img = #{coverImg},</if>
+            <if test="categoryId != null and categoryId != ''">category_id = #{categoryId},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="state != null and state != ''">state = #{state},</if>
+        </set>
+        where id = #{id}
+    </update>
+
     <!-- 查询文章列表 -->
     <select id="list" resultType="com.itheima.pojo.Article">
         select * from article

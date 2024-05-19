@@ -19,3 +19,8 @@ export const UserLoginService = (data) => {
     }
     return requset.post('/user/login', params);
 }
+
+// 获取用户信息
+export const UserInfoService = () => {
+    return requset.get('/user/userInfo');
+}

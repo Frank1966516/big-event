@@ -6,10 +6,37 @@ const isRegister = ref(false)
 
 // 注册
 // 注册数据
-const registerData = {
+const registerData = ref(
+    {
     username: '',
     password: '',
     rePassword: ''
+}
+)
+
+// 注册数据验证
+//自定义确认密码的校验函数
+const rePasswordValid = (rule, value, callback) => {
+    if (value == null || value === '') {
+        return callback(new Error('请再次确认密码'))
+    }
+    if (registerData.value.password !== value) {
+        return callback(new Error('两次输入密码不一致'))
+    }
+}
+//用于注册的表单校验模型
+const rules = {
+    username: [
+        { required: true, message: '请输入用户名', trigger: 'blur' },
+        { min: 5, max: 16, message: '用户名的长度必须为5~16位', trigger: 'blur' }
+    ],
+    password: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+        { min: 5, max: 16, message: '密码长度必须为5~16位', trigger: 'blur' }
+    ],
+    rePassword: [
+        { validator: rePasswordValid, trigger: 'blur' }
+    ]
 }
 
 // 注册按钮点击事件
@@ -31,17 +58,17 @@ const register = () => {
         <el-col :span="6" :offset="3" class="form">
 
             <!-- 注册表单 -->
-            <el-form ref="form" size="large" autocomplete="off" v-if="isRegister" :model="registerData">
+            <el-form ref="form" size="large" autocomplete="off" v-if="isRegister" :model="registerData" :rules="rules">
                 <el-form-item>
                     <h1>注册</h1>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="username">
                     <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="registerData.username"></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="password">
                     <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码" v-model="registerData.password"></el-input>
                 </el-form-item>
-                <el-form-item>
+                <el-form-item prop="rePassword">
                     <el-input :prefix-icon="Lock" type="password" placeholder="请输入再次密码" v-model="registerData.rePassword"></el-input>
                 </el-form-item>
 

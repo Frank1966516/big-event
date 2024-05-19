@@ -2,7 +2,7 @@
 // 包导入
 import { User, Lock } from '@element-plus/icons-vue'
 import { ref } from 'vue'
-import { UserRegisterService } from '@/api/user';
+import { UserRegisterService, UserLoginService} from '@/api/user';
 import { ElMessage } from 'element-plus';
 // 控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
@@ -66,6 +66,7 @@ const register = async () => {
     }
 }
 
+
 // 登录
 // 登录数据
 const loginData = ref({
@@ -74,10 +75,21 @@ const loginData = ref({
 })
 
 // 登录按钮点击事件
-const login = () => {
-
-    // 切换到登录表单
-    isRegister.value = false
+const login = async () => {
+    // 调用接口
+    let res = await UserLoginService(loginData.value)
+    if (res.code === 0) {
+        // 登录成功
+        ElMessage({
+            message: res.message? res.message:'登录成功',
+            type: 'success',
+        })
+    } else {
+        // 显示登录失败
+        ElMessage({
+            message: res.message? res.message:'登录失败',
+            type: 'error',
+    })}
 }
 </script>
 
@@ -117,15 +129,15 @@ const login = () => {
             </el-form>
 
             <!-- 登录表单 -->
-            <el-form ref="form" size="large" autocomplete="off" v-else>
+            <el-form ref="form" size="large" autocomplete="off" v-else :model="loginData" :rules="rules">
                 <el-form-item>
                     <h1>登录</h1>
                 </el-form-item>
-                <el-form-item>
-                    <el-input :prefix-icon="User" placeholder="请输入用户名"></el-input>
+                <el-form-item prop="username">
+                    <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="loginData.username"></el-input>
                 </el-form-item>
-                <el-form-item>
-                    <el-input name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码"></el-input>
+                <el-form-item prop="password">
+                    <el-input name="password" :prefix-icon="Lock" type="password" placeholder="请输入密码" v-model="loginData.password"></el-input>
                 </el-form-item>
                 <el-form-item class="flex">
                     <div class="flex">
@@ -136,7 +148,7 @@ const login = () => {
 
                 <!-- 登录按钮 -->
                 <el-form-item>
-                    <el-button class="button" type="primary" auto-insert-space>登录</el-button>
+                    <el-button class="button" type="primary" auto-insert-space @click="login">登录</el-button>
                 </el-form-item>
 
                 <!-- 跳转注册 -->

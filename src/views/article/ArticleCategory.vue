@@ -4,12 +4,15 @@ import {
     Delete
 } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
-import { getCategoryListService, addCategoryService} from '@/api/article.js'
+import { getCategoryListService, addCategoryService, updateCategoryService} from '@/api/article.js'
 import { ElMessage } from 'element-plus'
 
 // 弹窗
 // 控制添加分类弹窗
 const dialogVisible = ref(false)
+
+// 弹窗标题
+const dialogTitle = ref('')
 
 // 添加分类数据模型
 const categoryModel = ref({
@@ -46,13 +49,46 @@ const addCategory = async () => {
     getAllCategory()
 }
 
+// 文章分类详细数据回显
+const getCategoryInfo = (row) => {
+    // 显示弹窗
+    dialogVisible.value = true
+    // 修改弹窗标题
+    dialogTitle.value = '修改分类'
+    // 回显数据
+    categoryModel.value = {
+        categoryAlias: row.categoryAlias,
+        categoryName: row.categoryName,
+        id: row.id
+    }
+    console.log(categoryModel.value)
+}
+
+// 修改文章分类
+const updateCategory = async () => {
+    let res = await updateCategoryService(categoryModel.value)
+    ElMessage.success(res.message? res.message:'修改成功')
+    //隐藏弹窗
+    dialogVisible.value = false
+    //再次访问后台接口，查询所有分类
+    getCategoryList()
+}
+
+// 删除文章分类
+const deleteCategory = async (id) => {
+    let res = await deleteCategoryService(id)
+    ElMessage.success(res.message? res.message:'删除成功')
+    //再次访问后台接口，查询所有分类
+    getAllCategory()
+}
 
 // 监视弹窗
 watch(dialogVisible, () => {
-    // 清空模型数据
-    categoryModel.value = {
-        categoryName: '',
-        categoryAlias: ''
+    if(dialogTitle.value === '添加分类'){
+        categoryModel.value = {
+            categoryName: '',
+            categoryAlias: ''
+        }
     }
 })
 </script>
@@ -63,7 +99,7 @@ watch(dialogVisible, () => {
             <div class="header">
                 <span>文章分类</span>
                 <div class="extra">
-                    <el-button type="primary" @click="dialogVisible = true">添加分类</el-button>
+                    <el-button type="primary" @click="dialogVisible = true;dialogTitle = '添加分类'">添加分类</el-button>
                 </div>
             </div>
         </template>
@@ -75,7 +111,7 @@ watch(dialogVisible, () => {
             <el-table-column label="分类别名" prop="categoryAlias"></el-table-column>
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
-                    <el-button :icon="Edit" circle plain type="primary" ></el-button>
+                    <el-button :icon="Edit" circle plain type="primary" @click="getCategoryInfo(row)"></el-button>
                     <el-button :icon="Delete" circle plain type="danger"></el-button>
                 </template>
             </el-table-column>
@@ -85,7 +121,7 @@ watch(dialogVisible, () => {
         </el-table>
 
         <!-- 添加分类弹窗 -->
-        <el-dialog v-model="dialogVisible" title="添加弹层" width="30%" :visible="dialogVisible">
+        <el-dialog v-model="dialogVisible" :title="dialogTitle" width="30%" :visible="dialogVisible">
             <el-form :model="categoryModel" :rules="rules" label-width="100px" style="padding-right: 30px">
                 <el-form-item label="分类名称" prop="categoryName">
                     <el-input v-model="categoryModel.categoryName" minlength="1" maxlength="10"></el-input>
@@ -97,7 +133,7 @@ watch(dialogVisible, () => {
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="dialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="addCategory"> 确认 </el-button>
+                    <el-button type="primary" @click="dialogTitle === '添加分类' ? addCategory() : updateCategory()"> 确认 </el-button>
                 </span>
             </template>
         </el-dialog>

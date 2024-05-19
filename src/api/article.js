@@ -9,3 +9,8 @@ export const getCategoryListService = () => {
 export const addCategoryService = (data) => {
     return request.post('/category', data);
 }
+
+// 修改文章分类
+export const updateCategoryService = (params) => {
+    return request.put(`/category`, params);
+}

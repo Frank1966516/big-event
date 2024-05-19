@@ -20,3 +20,7 @@ export const deleteCategoryService = (id) => {
     return request.delete('/category?id='+id);
 }
 
+// 获取文章列表
+export const getArticleListService = (params) => {
+    return request.get('/article', { params });
+}

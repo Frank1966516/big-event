@@ -5,54 +5,69 @@ import {
 } from '@element-plus/icons-vue'
 
 import { ref } from 'vue'
+import { getCategoryListService, getArticleListService} from '@/api/article.js'
 
-//文章分类数据模型
-const categorys = ref([
-    {
-        "id": 3,
-        "categoryName": "美食",
-        "categoryAlias": "my",
-        "createTime": "2023-09-02 12:06:59",
-        "updateTime": "2023-09-02 12:06:59"
-    },
-    {
-        "id": 4,
-        "categoryName": "娱乐",
-        "categoryAlias": "yl",
-        "createTime": "2023-09-02 12:08:16",
-        "updateTime": "2023-09-02 12:08:16"
-    },
-    {
-        "id": 5,
-        "categoryName": "军事",
-        "categoryAlias": "js",
-        "createTime": "2023-09-02 12:08:33",
-        "updateTime": "2023-09-02 12:08:33"
-    }
-])
+// 文章分类数据模型
+const categorys = ref([])
+// 获取文章分类数据
+const getCategoryList = async () => {
+    let res = await getCategoryListService()
+    categorys.value = res.data
+}
+getCategoryList()
 
-//用户搜索时选中的分类id
-const categoryId=ref('')
 
-//用户搜索时选中的发布状态
-const state=ref('')
-
-//文章列表数据模型
+// 文章
+// 文章列表数据模型
 const articles = ref([])
-
-//分页条数据模型
+// 分页条数据模型
 const pageNum = ref(1)//当前页
 const total = ref(20)//总条数
 const pageSize = ref(3)//每页条数
+// 用户搜索时选中的分类id
+const categoryId=ref('')
 
-//当每页条数发生了变化，调用此函数
+// 用户搜索时选中的发布状态
+const state=ref('')
+
+// 获取文章列表数据
+const getArticleList = async () => {
+    let params = {
+        pageNum: pageNum.value,
+        pageSize: pageSize.value,
+        categoryId: categoryId.value ? categoryId.value : null,
+        state: state.value ? state.value : null
+    }
+    let result = await getArticleListService(params);
+    //渲染列表数据
+    articles.value = result.data.items
+    //为列表中添加categoryName属性
+    for(let i=0;i<articles.value.length;i++){
+        let article = articles.value[i];
+        for(let j=0;j<categorys.value.length;j++){
+            if(article.categoryId===categorys.value[j].id){
+                article.categoryName=categorys.value[j].categoryName
+            }
+        }
+    }
+    //渲染总条数
+    total.value=result.data.total
+}
+getArticleList()
+
+// 当每页条数发生了变化，调用此函数
 const onSizeChange = (size) => {
     pageSize.value = size
+    getArticleList()
 }
-//当前页码发生变化，调用此函数
+// 当前页码发生变化，调用此函数
 const onCurrentChange = (num) => {
     pageNum.value = num
+    getArticleList()
 }
+
+
+
 </script>
 <template>
     <el-card class="page-container">
@@ -64,6 +79,7 @@ const onCurrentChange = (num) => {
                 </div>
             </div>
         </template>
+
         <!-- 搜索表单 -->
         <el-form inline>
             <el-form-item label="文章分类：">
@@ -84,14 +100,15 @@ const onCurrentChange = (num) => {
                 </el-select>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary">搜索</el-button>
-                <el-button>重置</el-button>
+                <el-button type="primary" @click="getArticleList">搜索</el-button>
+                <el-button @click="categoryId='';state=''">重置</el-button>
             </el-form-item>
         </el-form>
+
         <!-- 文章列表 -->
         <el-table :data="articles" style="width: 100%">
             <el-table-column label="文章标题" width="400" prop="title"></el-table-column>
-            <el-table-column label="分类" prop="categoryId"></el-table-column>
+            <el-table-column label="分类" prop="categoryName"></el-table-column>
             <el-table-column label="发表时间" prop="createTime"> </el-table-column>
             <el-table-column label="状态" prop="state"></el-table-column>
             <el-table-column label="操作" width="100">
@@ -104,6 +121,7 @@ const onCurrentChange = (num) => {
                 <el-empty description="没有数据" />
             </template>
         </el-table>
+
         <!-- 分页条 -->
         <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[3, 5 ,10, 15]"
             layout="jumper, total, sizes, prev, pager, next" background :total="total" @size-change="onSizeChange"

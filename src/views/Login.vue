@@ -1,7 +1,7 @@
 <script setup>
 // 包导入
 import { User, Lock } from '@element-plus/icons-vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { UserRegisterService, UserLoginService} from '@/api/user';
 import { ElMessage } from 'element-plus';
 // 控制注册与登录表单的显示， 默认显示注册
@@ -50,12 +50,7 @@ const register = async () => {
             message: res.message? res.message:'注册成功',
             type: 'success',
         })
-        // 注册成功，删除表单数据， 跳转到登录页面
-        registerData.value = {
-            username: '',
-            password: '',
-            rePassword: ''
-        }
+        // 注册成功， 跳转到登录页面
         isRegister.value = false
     } else {
         // 显示注册失败
@@ -91,6 +86,21 @@ const login = async () => {
             type: 'error',
     })}
 }
+
+
+// 监视isRegister变量变化
+watch(isRegister, (newValue, oldValue) => {
+    // 重置表单
+    if(newValue === false){
+        registerData.value.username = ''
+        registerData.value.password = ''
+        registerData.value.rePassword = ''
+    }
+    else{
+        loginData.value.username = ''
+        loginData.value.password = ''
+    }
+})
 </script>
 
 <template>

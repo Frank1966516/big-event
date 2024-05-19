@@ -1,4 +1,4 @@
-import requset from '@/utils/request'
+import request from '@/utils/request'
 
 // 用户注册
 export const UserRegisterService = (data) => {
@@ -7,7 +7,7 @@ export const UserRegisterService = (data) => {
     for(let key in data){
         params.append(key, data[key])
     }
-    return requset.post('/user/register', params);
+    return request.post('/user/register', params);
 }
 
 // 用户登录
@@ -17,10 +17,15 @@ export const UserLoginService = (data) => {
     for(let key in data){
         params.append(key, data[key])
     }
-    return requset.post('/user/login', params);
+    return request.post('/user/login', params);
 }
 
 // 获取用户信息
 export const UserInfoService = () => {
-    return requset.get('/user/userInfo');
+    return request.get('/user/userInfo');
+}
+
+// 修改用户信息
+export const UserUpdateService = (params) => {
+    return request.put('/user/update', params);
 }

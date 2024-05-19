@@ -1,4 +1,9 @@
 import { ElMessage } from 'element-plus';
+import { useTokenStore } from '@/stores/token';
+
+// token的引入
+const tokenStore = useTokenStore();
+
 //定制请求的实例
 
 //导入axios  npm install axios
@@ -28,6 +33,18 @@ instance.interceptors.response.use(
         // alert('服务异常');
         ElMessage.error('服务异常');
         return Promise.reject(err);//异步的状态转化成失败的状态
+    }
+)
+
+// 添加请求拦截器
+instance.interceptors.request.use(
+    config=>{
+        // 添加请求头
+        config.headers['Authorization'] = tokenStore.token;
+        return config;
+    },
+    err=>{
+        return Promise.reject(err);
     }
 )
 

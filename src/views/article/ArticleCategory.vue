@@ -4,10 +4,17 @@ import {
     Delete
 } from '@element-plus/icons-vue'
 import { ref } from 'vue'
+import { getCategoryListService} from '@/api/article.js'
 
 // 文章分类
 const categorys = ref([])
 
+// 文章分类列表查询
+const getCategoryList = async () => {
+    const { data } = await getCategoryListService()
+    categorys.value = data
+}
+getCategoryList()
 
 </script>
 

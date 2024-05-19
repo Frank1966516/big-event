@@ -7,11 +7,12 @@ import App from './App.vue'
 import router from '@/router'
 import { createPinia } from 'pinia'
 import {createPersistedState} from'pinia-persistedstate-plugin'
+import locale from 'element-plus/dist/locale/zh-cn.js'
 
 const pinia = createPinia()
 pinia.use(createPersistedState())
 const app = createApp(App)
-app.use(ElementPlus)
+app.use(ElementPlus,{locale})
 app.use(router)
 app.use(pinia)
 app.mount('#app')

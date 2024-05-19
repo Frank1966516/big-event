@@ -19,3 +19,4 @@ export const updateCategoryService = (params) => {
 export const deleteCategoryService = (id) => {
     return request.delete('/category?id='+id);
 }
+

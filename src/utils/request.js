@@ -11,7 +11,18 @@ const instance = axios.create({baseURL})
 //添加响应拦截器
 instance.interceptors.response.use(
     result=>{
-        return result.data;
+        // 判断业务状态码
+        if(result.data.code === 0){
+            return result.data;
+        }
+        // 业务状态码不等于0
+        ElMessage({
+            message: result.message? result.message:'操作失败',
+            type: 'error',
+        })
+        // 如果结果不符合预期（result.data不合法），
+        // 就抛出一个Promise reject错误，并返回错误信息。
+        return Promise.reject(result.data);
     },
     err=>{
         // alert('服务异常');

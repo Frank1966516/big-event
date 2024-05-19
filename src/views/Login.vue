@@ -44,21 +44,13 @@ const rules = {
 const register = async () => {
     // 调用接口
     let res = await UserRegisterService(registerData.value)
-    if (res.code === 0) {
-        // 显示注册成功
-        ElMessage({
+    // 显示注册成功
+    ElMessage({
             message: res.message? res.message:'注册成功',
             type: 'success',
-        })
-        // 注册成功， 跳转到登录页面
-        isRegister.value = false
-    } else {
-        // 显示注册失败
-        ElMessage({
-            message: res.message? res.message:'注册失败',
-            type: 'error',
-        })
-    }
+    })
+    // 注册成功， 跳转到登录页面
+    isRegister.value = false
 }
 
 
@@ -73,18 +65,11 @@ const loginData = ref({
 const login = async () => {
     // 调用接口
     let res = await UserLoginService(loginData.value)
-    if (res.code === 0) {
-        // 登录成功
-        ElMessage({
+    // 登录成功
+    ElMessage({
             message: res.message? res.message:'登录成功',
             type: 'success',
-        })
-    } else {
-        // 显示登录失败
-        ElMessage({
-            message: res.message? res.message:'登录失败',
-            type: 'error',
-    })}
+    })
 }
 
 

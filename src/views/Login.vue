@@ -1,18 +1,19 @@
 <script setup>
+// 包导入
 import { User, Lock } from '@element-plus/icons-vue'
 import { ref } from 'vue'
+import { UserRegisterService } from '@/api/user';
+import { ElMessage } from 'element-plus';
 // 控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
 
 // 注册
 // 注册数据
-const registerData = ref(
-    {
+const registerData = ref({
     username: '',
     password: '',
     rePassword: ''
-}
-)
+})
 
 // 注册数据验证
 //自定义确认密码的校验函数
@@ -40,12 +41,40 @@ const rules = {
 }
 
 // 注册按钮点击事件
-const register = () => {
-    // 验证注册数据
-    // ...
+const register = async () => {
+    // 调用接口
+    let res = await UserRegisterService(registerData.value)
+    if (res.code === 0) {
+        // 显示注册成功
+        ElMessage({
+            message: res.message? res.message:'注册成功',
+            type: 'success',
+        })
+        // 注册成功，删除表单数据， 跳转到登录页面
+        registerData.value = {
+            username: '',
+            password: '',
+            rePassword: ''
+        }
+        isRegister.value = false
+    } else {
+        // 显示注册失败
+        ElMessage({
+            message: res.message? res.message:'注册失败',
+            type: 'error',
+        })
+    }
+}
 
-    // 注册成功
-    // ...
+// 登录
+// 登录数据
+const loginData = ref({
+    username: '',
+    password: ''
+})
+
+// 登录按钮点击事件
+const login = () => {
 
     // 切换到登录表单
     isRegister.value = false
@@ -74,7 +103,7 @@ const register = () => {
 
                 <!-- 注册按钮 -->
                 <el-form-item>
-                    <el-button class="button" type="primary" auto-insert-space>
+                    <el-button class="button" type="primary" auto-insert-space @click="register">
                         注册
                     </el-button>
                 </el-form-item>

@@ -7,8 +7,8 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 import { ref, watch } from 'vue'
-import { getCategoryListService, getArticleListService, addArticleService, updateArticleService} from '@/api/article.js'
-import { ElMessage } from 'element-plus';
+import { getCategoryListService, getArticleListService, addArticleService, updateArticleService, deleteArticleService} from '@/api/article.js'
+import { ElMessage, ElMessageBox } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue'
 import {useTokenStore} from '@/stores/token.js'
 const tokenStore = useTokenStore()
@@ -126,6 +126,30 @@ const updateArticle = async (state) => {
     drawerVisible.value = false;
 }
 
+// 删除文章
+const deleteArticle = async (row) => {
+    ElMessageBox.confirm(
+        '此操作将永久删除该文章, 是否继续?',
+        '提示',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    )
+    .then(async () => {
+        // 调用删除文章接口
+        let res = await deleteArticleService(row.id);
+        ElMessage.success(res.message? res.message: '删除成功')
+        getArticleList()
+    })
+    .catch(() => {
+        ElMessage.info('已取消删除')
+    })
+}
+
+
+
 // 监视抽屉显示
 watch(drawerVisible, () => {
     if(drawerTitle.value === '添加文章'){
@@ -185,7 +209,7 @@ watch(drawerVisible, () => {
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
                     <el-button :icon="Edit" circle plain type="primary" @click="showArticle(row)"></el-button>
-                    <el-button :icon="Delete" circle plain type="danger"></el-button>
+                    <el-button :icon="Delete" circle plain type="danger" @click="deleteArticle(row)"></el-button>
                 </template>
             </el-table-column>
             <template #empty>

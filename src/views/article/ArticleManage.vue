@@ -6,7 +6,7 @@ import {
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { getCategoryListService, getArticleListService, addArticleService} from '@/api/article.js'
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue'
@@ -77,11 +77,12 @@ const onCurrentChange = (num) => {
 // 文章添加
 // 抽屉数据
 const drawerVisible = ref(false)
+const drawerTitle = ref('添加文章')
 let articleModel = ref({
     title: '',
     content: '',
     coverImg: '',
-    state: '已发布',
+    state: '',
     categoryId: ''
 })
 
@@ -90,18 +91,47 @@ const uploadSuccess = (res) => {
     // 更新表单数据
     articleModel.value.coverImg = res.data
 }
-const addArticle =  () => {
-    // let params = {
-    //     title: row.title,
-    //     content: row.content,
-    //     coverImg: row.coverImg,
-    //     state: row.state,
-    //     categoryId: row.categoryId
-    // }
-    // let result = await addArticleService(params)
-    // ElMessage.success(result.message? result.message: '添加成功')
-    // getArticleList()
+// 添加文章
+const addArticle =  async () => {
+    console.log(articleModel.value)
+    let result = await addArticleService(articleModel.value)
+    ElMessage.success(result.message? result.message: '添加成功')
+    getArticleList()
 }
+
+// 修改文章
+// 文章数据回显
+const showArticle = (row) => {
+    // 显示抽屉
+    drawerVisible.value = true
+    // 修改抽屉标题
+    drawerTitle.value = '修改文章'
+    // 回显数据
+    articleModel.value = {
+        title: row.title,
+        content: row.content,
+        coverImg: row.coverImg,
+        state: row.state,
+        categoryId: row.categoryId
+    }
+}
+const updateArticle = () => {
+
+}
+
+// 监视抽屉显示
+watch(drawerVisible, () => {
+    if(drawerTitle.value === '添加文章'){
+        // 重置表单数据
+        articleModel.value = {
+            title: '',
+            content: '',
+            coverImg: '',
+            state: '',
+            categoryId: ''
+        }
+    }
+})
 </script>
 <template>
     <el-card class="page-container">
@@ -109,7 +139,7 @@ const addArticle =  () => {
             <div class="header">
                 <span>文章管理</span>
                 <div class="extra">
-                    <el-button type="primary" @click="drawerVisible=true">添加文章</el-button>
+                    <el-button type="primary" @click="drawerVisible=true;drawerTitle='添加文章'">添加文章</el-button>
                 </div>
             </div>
         </template>
@@ -147,7 +177,7 @@ const addArticle =  () => {
             <el-table-column label="状态" prop="state"></el-table-column>
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
-                    <el-button :icon="Edit" circle plain type="primary"></el-button>
+                    <el-button :icon="Edit" circle plain type="primary" @click="showArticle(row)"></el-button>
                     <el-button :icon="Delete" circle plain type="danger"></el-button>
                 </template>
             </el-table-column>
@@ -162,7 +192,7 @@ const addArticle =  () => {
             @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
 
         <!-- 抽屉 -->
-        <el-drawer v-model="drawerVisible" title="添加文章" direction="rtl" size="50%">
+        <el-drawer v-model="drawerVisible" :title="drawerTitle" direction="rtl" size="50%">
                 <!-- 添加文章表单 -->
                 <el-form :model="articleModel" label-width="100px" >
 
@@ -200,7 +230,7 @@ const addArticle =  () => {
                     </el-form-item>
 
                     <el-form-item>
-                        <el-button type="primary">发布</el-button>
+                        <el-button type="primary" @click="drawerTitle === '添加文章' ? addArticle() : updateArticle();articleModel.value.state = '已发布'">发布</el-button>
                         <el-button type="info">草稿</el-button>
                     </el-form-item>
                 </el-form>

@@ -7,7 +7,7 @@ import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 
 import { ref, watch } from 'vue'
-import { getCategoryListService, getArticleListService, addArticleService} from '@/api/article.js'
+import { getCategoryListService, getArticleListService, addArticleService, updateArticleService} from '@/api/article.js'
 import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue'
 import {useTokenStore} from '@/stores/token.js'
@@ -92,8 +92,9 @@ const uploadSuccess = (res) => {
     articleModel.value.coverImg = res.data
 }
 // 添加文章
-const addArticle =  async () => {
-    console.log(articleModel.value)
+const addArticle =  async (state) => {
+    articleModel.value.state = state
+    // 调用添加文章接口
     let result = await addArticleService(articleModel.value)
     ElMessage.success(result.message? result.message: '添加成功')
     getArticleList()
@@ -112,11 +113,17 @@ const showArticle = (row) => {
         content: row.content,
         coverImg: row.coverImg,
         state: row.state,
-        categoryId: row.categoryId
+        categoryId: row.categoryId,
+        id: row.id
     }
 }
-const updateArticle = () => {
-
+const updateArticle = async (state) => {
+    articleModel.value.state = state
+    // 调用修改文章接口
+    let res = await updateArticleService(articleModel.value);
+    ElMessage.success(res.message? res.message: '修改成功')
+    getArticleList()
+    drawerVisible.value = false;
 }
 
 // 监视抽屉显示
@@ -230,8 +237,8 @@ watch(drawerVisible, () => {
                     </el-form-item>
 
                     <el-form-item>
-                        <el-button type="primary" @click="drawerTitle === '添加文章' ? addArticle() : updateArticle();articleModel.value.state = '已发布'">发布</el-button>
-                        <el-button type="info">草稿</el-button>
+                        <el-button type="primary" @click="drawerTitle === '添加文章' ? addArticle('已发布') : updateArticle('已发布')">发布</el-button>
+                        <el-button type="info" @click="drawerTitle === '添加文章' ? addArticle('草稿') : updateArticle('草稿')">草稿</el-button>
                     </el-form-item>
                 </el-form>
             </el-drawer>

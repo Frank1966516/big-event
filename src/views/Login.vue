@@ -4,7 +4,25 @@ import { ref } from 'vue'
 // 控制注册与登录表单的显示， 默认显示注册
 const isRegister = ref(false)
 
+// 注册
+// 注册数据
+const registerData = {
+    username: '',
+    password: '',
+    rePassword: ''
+}
 
+// 注册按钮点击事件
+const register = () => {
+    // 验证注册数据
+    // ...
+
+    // 注册成功
+    // ...
+
+    // 切换到登录表单
+    isRegister.value = false
+}
 </script>
 
 <template>
@@ -13,18 +31,18 @@ const isRegister = ref(false)
         <el-col :span="6" :offset="3" class="form">
 
             <!-- 注册表单 -->
-            <el-form ref="form" size="large" autocomplete="off" v-if="isRegister">
+            <el-form ref="form" size="large" autocomplete="off" v-if="isRegister" :model="registerData">
                 <el-form-item>
                     <h1>注册</h1>
                 </el-form-item>
                 <el-form-item>
-                    <el-input :prefix-icon="User" placeholder="请输入用户名"></el-input>
+                    <el-input :prefix-icon="User" placeholder="请输入用户名" v-model="registerData.username"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码"></el-input>
+                    <el-input :prefix-icon="Lock" type="password" placeholder="请输入密码" v-model="registerData.password"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-input :prefix-icon="Lock" type="password" placeholder="请输入再次密码"></el-input>
+                    <el-input :prefix-icon="Lock" type="password" placeholder="请输入再次密码" v-model="registerData.rePassword"></el-input>
                 </el-form-item>
 
                 <!-- 注册按钮 -->

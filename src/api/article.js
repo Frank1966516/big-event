@@ -6,11 +6,16 @@ export const getCategoryListService = () => {
 }
 
 // 添加文章分类
-export const addCategoryService = (data) => {
-    return request.post('/category', data);
+export const addCategoryService = (params) => {
+    return request.post('/category', params);
 }
 
 // 修改文章分类
 export const updateCategoryService = (params) => {
     return request.put(`/category`, params);
+}
+
+// 删除文章分类
+export const deleteCategoryService = (id) => {
+    return request.delete('/category?id='+id);
 }

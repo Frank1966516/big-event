@@ -4,8 +4,8 @@ import {
     Delete
 } from '@element-plus/icons-vue'
 import { ref, watch } from 'vue'
-import { getCategoryListService, addCategoryService, updateCategoryService} from '@/api/article.js'
-import { ElMessage } from 'element-plus'
+import { getCategoryListService, addCategoryService, updateCategoryService, deleteCategoryService} from '@/api/article.js'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 // 弹窗
 // 控制添加分类弹窗
@@ -76,10 +76,22 @@ const updateCategory = async () => {
 
 // 删除文章分类
 const deleteCategory = async (id) => {
-    let res = await deleteCategoryService(id)
-    ElMessage.success(res.message? res.message:'删除成功')
-    //再次访问后台接口，查询所有分类
-    getAllCategory()
+    ElMessageBox.confirm('此操作将永久删除该分类, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+    }).then(async () => {
+        // 删除文章分类
+        let res = await deleteCategoryService(id)
+        ElMessage.success(res.message? res.message:'删除成功')
+        //再次访问后台接口，查询所有分类
+        getCategoryList()
+    }).catch(() => {
+        ElMessage({
+            type: 'info',
+            message: '已取消删除',
+        })
+    })
 }
 
 // 监视弹窗
@@ -112,7 +124,7 @@ watch(dialogVisible, () => {
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
                     <el-button :icon="Edit" circle plain type="primary" @click="getCategoryInfo(row)"></el-button>
-                    <el-button :icon="Delete" circle plain type="danger"></el-button>
+                    <el-button :icon="Delete" circle plain type="danger" @click="deleteCategory(row.id)"></el-button>
                 </template>
             </el-table-column>
             <template #empty>
@@ -120,7 +132,7 @@ watch(dialogVisible, () => {
             </template>
         </el-table>
 
-        <!-- 添加分类弹窗 -->
+        <!-- 添加分类和修改分类弹窗 -->
         <el-dialog v-model="dialogVisible" :title="dialogTitle" width="30%" :visible="dialogVisible">
             <el-form :model="categoryModel" :rules="rules" label-width="100px" style="padding-right: 30px">
                 <el-form-item label="分类名称" prop="categoryName">

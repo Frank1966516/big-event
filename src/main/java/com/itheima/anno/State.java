@@ -6,6 +6,7 @@ import jakarta.validation.Payload;
 
 import java.lang.annotation.*;
 
+// 校验状态参数的注解
 @Documented
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)

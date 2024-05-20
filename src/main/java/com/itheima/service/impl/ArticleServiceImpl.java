@@ -63,4 +63,10 @@ public class ArticleServiceImpl implements ArticleService {
     public void delete(Integer id) {
         articleMapper.delete(id);
     }
+
+    // 文章批量删除
+    @Override
+    public void deleteByCategoryId(Integer categoryId) {
+        articleMapper.deleteByCategoryId(categoryId);
+    }
 }

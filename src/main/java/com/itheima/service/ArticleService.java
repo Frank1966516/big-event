@@ -19,4 +19,7 @@ public interface ArticleService {
 
     // 文章删除
     void delete(Integer id);
+
+    // 根据文章分类id删除文章
+    void deleteByCategoryId(Integer categoryId);
 }

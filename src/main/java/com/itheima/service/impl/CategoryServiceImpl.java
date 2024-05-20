@@ -2,10 +2,12 @@ package com.itheima.service.impl;
 
 import com.itheima.mapper.CategoryMapper;
 import com.itheima.pojo.Category;
+import com.itheima.service.ArticleService;
 import com.itheima.service.CategoryService;
 import com.itheima.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.Map;
 public class CategoryServiceImpl implements CategoryService{
     @Autowired
     private CategoryMapper categoryMapper;
+    @Autowired
+    private ArticleService articleService;
 
     // 新增文章分类
     @Override
@@ -52,10 +56,14 @@ public class CategoryServiceImpl implements CategoryService{
     }
 
     // 删除文章分类
+    @Transactional
     @Override
     public void delete(Integer id) {
         // 得到用户id
         Map<String, Object> claims = ThreadLocalUtil.get();
+        // 删除文章分类
         categoryMapper.delete(id, (Integer) claims.get("id"));
+        // 删除文章分类下的文章
+        articleService.deleteByCategoryId(id);
     }
 }

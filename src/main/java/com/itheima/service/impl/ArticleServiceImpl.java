@@ -2,7 +2,7 @@ package com.itheima.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.itheima.anno.UpdateArticle;
+import com.itheima.anno.Update;
 import com.itheima.mapper.ArticleMapper;
 import com.itheima.pojo.Article;
 import com.itheima.pojo.PageBean;
@@ -54,7 +54,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     // 文章更新
     @Override
-    @UpdateArticle
+    @Update
     public void update(Article article) {
         articleMapper.update(article);
     }

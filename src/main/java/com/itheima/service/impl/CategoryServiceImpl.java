@@ -1,6 +1,6 @@
 package com.itheima.service.impl;
 
-import com.itheima.anno.UpdateCategory;
+import com.itheima.anno.Update;
 import com.itheima.mapper.CategoryMapper;
 import com.itheima.pojo.Category;
 import com.itheima.service.ArticleService;
@@ -51,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService{
 
     // 更新文章分类
     @Override
-    @UpdateCategory
+    @Update
     public void update(Category category) {
         categoryMapper.update(category);
     }

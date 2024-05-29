@@ -98,6 +98,7 @@ const addArticle =  async (state) => {
     let result = await addArticleService(articleModel.value)
     ElMessage.success(result.message? result.message: '添加成功')
     getArticleList()
+    drawerVisible.value = false;
 }
 
 // 修改文章
